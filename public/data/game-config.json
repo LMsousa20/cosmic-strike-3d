@@ -1,0 +1,152 @@
+{
+  "version": 1,
+  "meta": { "name": "Cosmic Strike 3D", "description": "Configuração padrão do jogo. Gere uma nova pelo Painel > Backup > Exportar e substitua este arquivo para torná-la padrão." },
+  "ships": [
+    {
+      "id": "falcon", "name": "Falcão Estelar", "description": "Caça equilibrado da frota. Confiável em qualquer situação.",
+      "enabled": true, "model": "", "sprite": "", "shape": "fighter", "color": "#0284c7", "accent": "#00f0ff", "scale": 1, "modelRotation": 0,
+      "hp": 100, "speed": 1, "fireRate": 220, "damage": 1, "weaponStart": 1, "bulletColor": "#00f0ff", "price": 0, "unlockedByDefault": true
+    },
+    {
+      "id": "viper", "name": "Víbora X", "description": "Interceptador ultraleve. Rápido e com cadência altíssima, mas frágil.",
+      "enabled": true, "model": "", "sprite": "", "shape": "interceptor", "color": "#be123c", "accent": "#fb7185", "scale": 1, "modelRotation": 0,
+      "hp": 80, "speed": 1.3, "fireRate": 160, "damage": 0.9, "weaponStart": 1, "bulletColor": "#fb7185", "price": 2500, "unlockedByDefault": false
+    },
+    {
+      "id": "bastion", "name": "Bastião Titan", "description": "Fortaleza voadora. Lenta, porém cada disparo é devastador.",
+      "enabled": true, "model": "", "sprite": "", "shape": "heavy", "color": "#b45309", "accent": "#fde047", "scale": 1.1, "modelRotation": 0,
+      "hp": 170, "speed": 0.8, "fireRate": 260, "damage": 1.7, "weaponStart": 1, "bulletColor": "#fde047", "price": 5000, "unlockedByDefault": false
+    },
+    {
+      "id": "specter", "name": "Espectro Nulo", "description": "Protótipo furtivo com arma pré-carregada no nível 2.",
+      "enabled": true, "model": "", "sprite": "", "shape": "stealth", "color": "#6d28d9", "accent": "#c084fc", "scale": 1, "modelRotation": 0,
+      "hp": 110, "speed": 1.15, "fireRate": 190, "damage": 1.25, "weaponStart": 2, "bulletColor": "#d8b4fe", "price": 9000, "unlockedByDefault": false
+    }
+  ],
+  "enemies": [
+    {
+      "id": "scout", "name": "Batedor", "description": "Voa em esquadrões ondulando pela tela.",
+      "enabled": true, "model": "", "sprite": "", "shape": "scout", "color": "#f43f5e", "accent": "#fde047", "scale": 1, "modelRotation": 0,
+      "behavior": "sine", "hp": 2, "speed": 220, "contactDamage": 25, "firePattern": "none", "fireRate": 1500, "bulletDamage": 15, "bulletSpeed": 250,
+      "coins": 1, "powerupChance": 0.1, "score": 100, "squadSize": 3, "spawnWeight": 45, "minStage": 1
+    },
+    {
+      "id": "gunship", "name": "Cruzador Pesado", "description": "Para no alto da tela e dispara contra o jogador.",
+      "enabled": true, "model": "", "sprite": "", "shape": "gunship", "color": "#9333ea", "accent": "#ef4444", "scale": 1, "modelRotation": 0,
+      "behavior": "shooter", "hp": 6, "speed": 130, "contactDamage": 30, "firePattern": "aimed", "fireRate": 1300, "bulletDamage": 15, "bulletSpeed": 250,
+      "coins": 1, "powerupChance": 0.18, "score": 250, "squadSize": 1, "spawnWeight": 30, "minStage": 1
+    },
+    {
+      "id": "meteor", "name": "Meteoro", "description": "Rocha espacial que se parte em duas ao ser destruída.",
+      "enabled": true, "model": "", "sprite": "", "shape": "meteor", "color": "#9a3412", "accent": "#fb923c", "scale": 1, "modelRotation": 0,
+      "behavior": "splitter", "hp": 4, "speed": 130, "contactDamage": 25, "firePattern": "none", "fireRate": 1500, "bulletDamage": 15, "bulletSpeed": 250,
+      "coins": 1, "powerupChance": 0.12, "score": 150, "squadSize": 1, "spawnWeight": 25, "minStage": 1
+    },
+    {
+      "id": "dart", "name": "Caçador Suicida", "description": "Mergulha em direção ao jogador em alta velocidade.",
+      "enabled": true, "model": "", "sprite": "", "shape": "dart", "color": "#15803d", "accent": "#4ade80", "scale": 1, "modelRotation": 0,
+      "behavior": "kamikaze", "hp": 3, "speed": 210, "contactDamage": 35, "firePattern": "none", "fireRate": 1500, "bulletDamage": 15, "bulletSpeed": 250,
+      "coins": 1, "powerupChance": 0.1, "score": 180, "squadSize": 2, "spawnWeight": 18, "minStage": 2
+    },
+    {
+      "id": "wasp", "name": "Vespa Elétrica", "description": "Ziguezagueia disparando leques de plasma.",
+      "enabled": true, "model": "", "sprite": "", "shape": "wasp", "color": "#ca8a04", "accent": "#fef08a", "scale": 1, "modelRotation": 0,
+      "behavior": "zigzag", "hp": 5, "speed": 160, "contactDamage": 25, "firePattern": "spread3", "fireRate": 1900, "bulletDamage": 12, "bulletSpeed": 230,
+      "coins": 2, "powerupChance": 0.15, "score": 300, "squadSize": 1, "spawnWeight": 18, "minStage": 2
+    },
+    {
+      "id": "sentinel", "name": "Sentinela Orbital", "description": "Orbe blindado que dispara anéis de energia 360°.",
+      "enabled": true, "model": "", "sprite": "", "shape": "orb", "color": "#0e7490", "accent": "#22d3ee", "scale": 1.15, "modelRotation": 0,
+      "behavior": "shooter", "hp": 16, "speed": 90, "contactDamage": 40, "firePattern": "ring", "fireRate": 1700, "bulletDamage": 15, "bulletSpeed": 200,
+      "coins": 4, "powerupChance": 0.3, "score": 600, "squadSize": 1, "spawnWeight": 12, "minStage": 3
+    }
+  ],
+  "bosses": [
+    {
+      "id": "dreadnought", "name": "Dreadnought Titan", "description": "Encouraçado imperial com canhões de asa.",
+      "enabled": true, "model": "", "sprite": "", "shape": "boss_dreadnought", "color": "#9f1239", "accent": "#facc15", "scale": 1, "modelRotation": 0,
+      "warningText": "DREADNOUGHT TITAN DETECTADO", "hp": 1200, "speed": 120, "patterns": ["spread", "aimed", "ring"], "fireRate": 1400,
+      "bulletDamage": 15, "bulletSpeed": 240, "enrageAt": 40, "reward": 1000, "score": 5000
+    },
+    {
+      "id": "hive", "name": "Rainha da Colmeia", "description": "Organismo colossal que invoca lacaios e dispara espirais.",
+      "enabled": true, "model": "", "sprite": "", "shape": "boss_hive", "color": "#6d28d9", "accent": "#22d3ee", "scale": 1, "modelRotation": 0,
+      "warningText": "BIO-SINAL COLOSSAL: RAINHA DA COLMEIA", "hp": 1800, "speed": 100, "patterns": ["spiral", "minions", "aimed"], "fireRate": 1300,
+      "bulletDamage": 14, "bulletSpeed": 220, "enrageAt": 40, "reward": 1600, "score": 8000
+    },
+    {
+      "id": "leviathan", "name": "Leviatã de Plasma", "description": "Serpente cósmica com chuva de plasma devastadora.",
+      "enabled": true, "model": "", "sprite": "", "shape": "boss_leviathan", "color": "#0369a1", "accent": "#f97316", "scale": 1, "modelRotation": 0,
+      "warningText": "LEVIATÃ DE PLASMA EMERGINDO", "hp": 2600, "speed": 140, "patterns": ["rain", "ring", "spiral", "spread"], "fireRate": 1150,
+      "bulletDamage": 16, "bulletSpeed": 250, "enrageAt": 35, "reward": 2500, "score": 12000
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "asteroid_field", "name": "Campo de Asteroides", "description": "Uma faixa de rochas atravessa a pista.",
+      "enabled": true, "type": "asteroidField", "model": "", "sprite": "", "color": "#57534e", "accent": "#fb923c", "scale": 1, "modelRotation": 0,
+      "destructible": true, "hp": 3, "damage": 20, "speed": 150, "size": 1, "pull": 0, "coins": 1, "score": 40, "spawnWeight": 30, "minStage": 1
+    },
+    {
+      "id": "proton_mine", "name": "Mina de Prótons", "description": "Explode quando o jogador se aproxima.",
+      "enabled": true, "type": "mine", "model": "", "sprite": "", "color": "#991b1b", "accent": "#ef4444", "scale": 1, "modelRotation": 0,
+      "destructible": true, "hp": 2, "damage": 35, "speed": 80, "size": 1, "pull": 0, "coins": 1, "score": 60, "spawnWeight": 25, "minStage": 1
+    },
+    {
+      "id": "laser_gate", "name": "Portão Laser", "description": "Barreira laser que liga e desliga. Passe pela abertura!",
+      "enabled": true, "type": "laserGate", "model": "", "sprite": "", "color": "#334155", "accent": "#f43f5e", "scale": 1, "modelRotation": 0,
+      "destructible": false, "hp": 1, "damage": 25, "speed": 110, "size": 3.4, "pull": 0, "coins": 0, "score": 100, "spawnWeight": 20, "minStage": 2
+    },
+    {
+      "id": "black_hole", "name": "Buraco Negro", "description": "Puxa a nave e as moedas para o seu núcleo mortal.",
+      "enabled": true, "type": "blackHole", "model": "", "sprite": "", "color": "#020005", "accent": "#a855f7", "scale": 1, "modelRotation": 0,
+      "destructible": false, "hp": 1, "damage": 40, "speed": 60, "size": 1.4, "pull": 9, "coins": 0, "score": 200, "spawnWeight": 10, "minStage": 3
+    },
+    {
+      "id": "energy_wall", "name": "Muro de Energia", "description": "Escudo inimigo que bloqueia seus tiros. Destrua ou desvie.",
+      "enabled": true, "type": "energyWall", "model": "", "sprite": "", "color": "#155e75", "accent": "#22d3ee", "scale": 1, "modelRotation": 0,
+      "destructible": true, "hp": 40, "damage": 30, "speed": 95, "size": 5, "pull": 0, "coins": 3, "score": 300, "spawnWeight": 15, "minStage": 2
+    }
+  ],
+  "tracks": [
+    {
+      "id": "neon_sector", "name": "Setor Néon", "description": "A fronteira digital da galáxia. Onde tudo começa.", "enabled": true, "order": 1,
+      "style": "neonGrid", "groundTexture": "", "skyTexture": "", "groundColor": "#05060f", "gridColor": "#00f0ff",
+      "skyTop": "#050818", "skyBottom": "#4c0f6b", "fogColor": "#0b0720", "lightColor": "#a5f3fc",
+      "scrollSpeed": 150, "duration": 50, "spawnInterval": 1100, "obstacleInterval": 7000,
+      "enemies": ["scout", "gunship", "meteor"], "obstacles": ["asteroid_field", "proton_mine"], "boss": "dreadnought"
+    },
+    {
+      "id": "magma_belt", "name": "Cinturão de Magma", "description": "Um planeta em erupção constante.", "enabled": true, "order": 2,
+      "style": "lava", "groundTexture": "", "skyTexture": "", "groundColor": "#1a0703", "gridColor": "#ff5a1f",
+      "skyTop": "#120202", "skyBottom": "#7c1d06", "fogColor": "#2a0905", "lightColor": "#fdba74",
+      "scrollSpeed": 170, "duration": 55, "spawnInterval": 980, "obstacleInterval": 6000,
+      "enemies": ["scout", "gunship", "meteor", "dart", "wasp"], "obstacles": ["proton_mine", "laser_gate", "energy_wall"], "boss": "hive"
+    },
+    {
+      "id": "glacial_planet", "name": "Planeta Glacial", "description": "Cânions de gelo eterno sob uma aurora fria.", "enabled": true, "order": 3,
+      "style": "rocky", "groundTexture": "", "skyTexture": "", "groundColor": "#9cc3e6", "gridColor": "#e0f2fe",
+      "skyTop": "#020617", "skyBottom": "#155e75", "fogColor": "#0c2a3d", "lightColor": "#e0f2fe",
+      "scrollSpeed": 160, "duration": 60, "spawnInterval": 900, "obstacleInterval": 5500,
+      "enemies": ["scout", "gunship", "dart", "wasp", "sentinel"], "obstacles": ["asteroid_field", "laser_gate", "energy_wall", "black_hole"], "boss": "dreadnought"
+    },
+    {
+      "id": "deep_void", "name": "Vazio Profundo", "description": "Além do mapa estelar. Nada sobrevive aqui por muito tempo.", "enabled": true, "order": 4,
+      "style": "deepSpace", "groundTexture": "", "skyTexture": "", "groundColor": "#000000", "gridColor": "#a855f7",
+      "skyTop": "#000000", "skyBottom": "#1e0538", "fogColor": "#07010f", "lightColor": "#e9d5ff",
+      "scrollSpeed": 200, "duration": 65, "spawnInterval": 820, "obstacleInterval": 5000,
+      "enemies": ["scout", "gunship", "meteor", "dart", "wasp", "sentinel"], "obstacles": ["asteroid_field", "proton_mine", "laser_gate", "black_hole", "energy_wall"], "boss": "leviathan"
+    }
+  ],
+  "economy": {
+    "startingCoins": 0, "coinValue": 25, "bigCoinValue": 60, "stageClearBonus": 500,
+    "costMode": "linear", "costGrowth": 1.6, "upgradeMaxLevel": 5,
+    "hpUpgradePrice": 300, "hpPerLevel": 25,
+    "speedUpgradePrice": 250, "speedPerLevel": 0.15,
+    "magnetUpgradePrice": 200, "magnetPerLevel": 60,
+    "damageUpgradePrice": 400, "damagePerLevel": 0.2,
+    "wingmanPrice": 350, "wingmanDuration": 12,
+    "bombPrice": 250, "bombDamage": 400, "startBombs": 2, "maxBombs": 5,
+    "shieldPrice": 300, "repairPrice": 200
+  }
+}

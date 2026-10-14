@@ -1,0 +1,48 @@
+/* ==========================================================================
+   DESIGN TOKENS - COSMIC STRIKE SCI-FI NEON THEME
+   ========================================================================== */
+:root {
+  --font-display: 'Orbitron', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-retro: 'Press Start 2P', monospace;
+  --font-mono: 'Share Tech Mono', monospace;
+
+  /* Cores Base */
+  --bg-deep: #030408;
+  --bg-space: #070913;
+  --bg-panel: rgba(13, 17, 34, 0.85);
+  --bg-panel-light: rgba(22, 28, 54, 0.75);
+  --bg-panel-glow: rgba(0, 240, 255, 0.08);
+
+  /* Acentos Néon */
+  --neon-cyan: #00f0ff;
+  --neon-cyan-glow: rgba(0, 240, 255, 0.5);
+  --neon-blue: #38bdf8;
+  --neon-purple: #c084fc;
+  --neon-pink: #f43f5e;
+  --neon-red: #ef4444;
+  --neon-yellow: #facc15;
+  --neon-gold: #ffd700;
+  --neon-emerald: #10b981;
+
+  /* Bordas e Divisores */
+  --border-neon: 1px solid rgba(0, 240, 255, 0.35);
+  --border-neon-bright: 2px solid #00f0ff;
+  --border-glass: 1px solid rgba(255, 255, 255, 0.12);
+  --border-glow-cyan: 0 0 15px rgba(0, 240, 255, 0.3);
+  --border-glow-red: 0 0 15px rgba(239, 68, 68, 0.4);
+
+  /* Texto */
+  --text-main: #f1f5f9;
+  --text-dim: #94a3b8;
+  --text-muted: #64748b;
+  --text-glow-cyan: 0 0 10px rgba(0, 240, 255, 0.6);
+  --text-glow-gold: 0 0 10px rgba(255, 215, 0, 0.7);
+
+  /* Raios e Transições */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}

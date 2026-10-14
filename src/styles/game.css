@@ -1,0 +1,796 @@
+@import './tokens.css';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-deep);
+  font-family: var(--font-mono);
+  color: var(--text-main);
+}
+
+#app-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at center, #0b0d1e 0%, #020307 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 12px;
+  gap: 20px;
+}
+
+/* ==========================================================================
+   VIEWPORT 3D DO JOGO (PROPORÇÃO 9:16 VERTICAL ARCADE / MOBILE)
+   ========================================================================== */
+#arcade-viewport-container {
+  position: relative;
+  height: 96vh;
+  max-height: 96vh;
+  aspect-ratio: 9 / 16;
+  max-width: calc(96vh * 9 / 16);
+  background: #000004;
+  border: 3px solid var(--neon-cyan);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 35px var(--neon-cyan-glow), inset 0 0 30px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  touch-action: none;
+}
+
+#canvas-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#canvas-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* Scanlines arcade sutis */
+#arcade-viewport-container::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  opacity: 0.45;
+  z-index: 10;
+}
+
+/* Alerta de Chefe */
+#boss-warning-overlay {
+  position: absolute;
+  top: 25%;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(90deg, rgba(225, 29, 72, 0.2), rgba(225, 29, 72, 0.9) 30%, rgba(225, 29, 72, 0.9) 70%, rgba(225, 29, 72, 0.2));
+  color: #fff;
+  text-align: center;
+  padding: 14px 0;
+  font-family: var(--font-retro);
+  font-size: 12px;
+  letter-spacing: 2px;
+  border-top: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  box-shadow: 0 0 40px rgba(225, 29, 72, 0.85);
+  transform: translateY(-50%) scale(0);
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 30;
+  pointer-events: none;
+}
+
+#boss-warning-overlay.active {
+  transform: translateY(-50%) scale(1);
+  opacity: 1;
+  animation: bossPulse 0.5s infinite alternate;
+}
+
+@keyframes bossPulse {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.3); }
+}
+
+/* Barra de Vida Superior do Chefe */
+#boss-hud-bar {
+  position: absolute;
+  top: 14px;
+  left: 20px;
+  right: 20px;
+  z-index: 25;
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.boss-title-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--neon-gold);
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+}
+
+.boss-hp-track {
+  width: 100%;
+  height: 10px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid #ef4444;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+}
+
+.boss-hp-fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #ef4444, #f59e0b);
+  transition: width 0.15s ease-out;
+}
+
+/* HUD Touch Integrado */
+#combat-touch-hud {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.touch-btn {
+  pointer-events: auto;
+  width: 62px;
+  height: 62px;
+  border-radius: var(--radius-full);
+  background: rgba(15, 23, 42, 0.85);
+  border: 2px solid var(--neon-cyan);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 800;
+  box-shadow: var(--border-glow-cyan);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: transform 0.1s, background-color 0.2s;
+}
+
+.touch-btn:active {
+  transform: scale(0.92);
+  background: rgba(0, 240, 255, 0.3);
+}
+
+.touch-btn.bomb-btn {
+  border-color: var(--neon-red);
+  box-shadow: var(--border-glow-red);
+}
+
+.touch-btn.bomb-btn:active {
+  background: rgba(239, 68, 68, 0.4);
+}
+
+.touch-btn-badge {
+  font-size: 11px;
+  font-family: var(--font-retro);
+  color: var(--neon-gold);
+  margin-top: 2px;
+}
+
+#mobile-hangar-toggle {
+  display: none;
+  pointer-events: auto;
+  background: linear-gradient(135deg, #0284c7, #06b6d4);
+  border: 1px solid #fff;
+  padding: 8px 14px;
+  border-radius: 20px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
+  cursor: pointer;
+}
+
+/* Modais sobrepostos no viewport 3D (Menu Inicial, Pause, Game Over) */
+.game-overlay-screen {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(3, 4, 10, 0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  z-index: 50;
+  text-align: center;
+  transition: opacity 0.3s ease;
+}
+
+.game-overlay-screen.hidden {
+  display: none !important;
+}
+
+.overlay-title {
+  font-family: var(--font-retro);
+  font-size: 20px;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 15px var(--neon-cyan-glow);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.overlay-subtitle {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--neon-gold);
+  margin-bottom: 24px;
+}
+
+.overlay-btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 260px;
+}
+
+.action-btn {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border: 2px solid var(--neon-cyan);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+  transition: all 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+}
+
+.action-btn.btn-danger {
+  background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%);
+  border-color: #fb7185;
+  box-shadow: 0 0 15px rgba(225, 29, 72, 0.3);
+}
+
+.action-btn.btn-danger:hover {
+  box-shadow: 0 0 25px rgba(225, 29, 72, 0.6);
+}
+
+.action-btn.btn-secondary {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-dim);
+}
+
+/* ==========================================================================
+   PAINEL LATERAL HANGAR / LOJA / STATUS
+   ========================================================================== */
+#hangar-sidebar {
+  width: 380px;
+  max-width: 420px;
+  height: 96vh;
+  background: linear-gradient(180deg, #0a0e1e 0%, #05060e 100%);
+  border: 2px solid var(--neon-cyan);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.18);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 12px;
+  overflow-y: auto;
+  z-index: 40;
+}
+
+#hangar-sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+#hangar-sidebar::-webkit-scrollbar-thumb {
+  background: var(--neon-cyan);
+  border-radius: 4px;
+}
+
+.hangar-header {
+  border-bottom: 2px dashed rgba(0, 240, 255, 0.3);
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.game-title {
+  font-family: var(--font-retro);
+  font-size: 12px;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.8);
+  line-height: 1.4;
+}
+
+.stage-badge {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--neon-gold);
+  background: rgba(255, 215, 0, 0.12);
+  border: 1px solid var(--neon-gold);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Cartão de Moedas */
+.credits-card {
+  background: rgba(250, 204, 21, 0.08);
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.credits-title {
+  font-family: var(--font-retro);
+  font-size: 9px;
+  color: #facc15;
+}
+
+.credits-value-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.credits-value {
+  font-family: var(--font-retro);
+  font-size: 15px;
+  color: #fef08a;
+  text-shadow: 0 0 8px rgba(250, 204, 21, 0.7);
+}
+
+/* Seletor de Naves no Hangar */
+.ship-select-card {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ship-carousel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ship-nav-btn {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid var(--neon-cyan);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+.ship-nav-btn:hover {
+  background: var(--neon-cyan);
+  color: #000;
+}
+
+.ship-display-info {
+  text-align: center;
+}
+
+.ship-active-name {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--neon-cyan);
+}
+
+.ship-active-desc {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.ship-action-bar {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.ship-btn-select, .ship-btn-buy {
+  flex: 1;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+}
+
+.ship-btn-select {
+  background: #10b981;
+  color: #fff;
+}
+
+.ship-btn-select:disabled {
+  background: #334155;
+  color: #94a3b8;
+  cursor: default;
+}
+
+.ship-btn-buy {
+  background: #f59e0b;
+  color: #000;
+}
+
+.ship-btn-buy:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Caixas de Seções */
+.hangar-card {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hangar-card-title {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Barras de Status do Jogador */
+.stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.meter-container {
+  width: 100%;
+  height: 9px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.meter-fill {
+  height: 100%;
+  transition: width 0.25s ease-out, background 0.3s;
+}
+
+.hp-meter {
+  width: 100%;
+  background: linear-gradient(90deg, #10b981, #059669);
+  box-shadow: 0 0 8px #10b981;
+}
+
+.weapon-meter {
+  width: 20%;
+  background: linear-gradient(90deg, #f59e0b, #ef4444);
+  box-shadow: 0 0 8px #f59e0b;
+}
+
+.shield-meter {
+  width: 0%;
+  background: linear-gradient(90deg, #06b6d4, #3b82f6);
+  box-shadow: 0 0 8px #06b6d4;
+}
+
+/* Itens da Loja */
+.shop-items-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.shop-item-btn {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.shop-item-btn:hover:not(:disabled) {
+  background: rgba(6, 182, 212, 0.2);
+  border-color: var(--neon-cyan);
+  transform: translateX(3px);
+}
+
+.shop-item-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+.shop-item-name {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--neon-blue);
+}
+
+.shop-item-desc {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.shop-item-cost {
+  font-family: var(--font-retro);
+  font-size: 9px;
+  color: var(--neon-gold);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 4px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.btn-call-wingman {
+  width: 100%;
+  background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%);
+  border: 2px solid #fb7185;
+  border-radius: var(--radius-md);
+  padding: 12px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 0 16px rgba(225, 29, 72, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+
+.btn-call-wingman:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(225, 29, 72, 0.7);
+}
+
+.btn-call-wingman:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+#wingman-timer-container {
+  width: 100%;
+  height: 6px;
+  background: #1e1b4b;
+  border-radius: 3px;
+  overflow: hidden;
+  display: none;
+  margin-top: 4px;
+}
+
+#wingman-timer-fill {
+  width: 100%;
+  height: 100%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
+/* Link para o Painel Administrativo */
+.btn-admin-link {
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  border: 1px solid #c084fc;
+  border-radius: var(--radius-md);
+  padding: 10px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.35);
+  transition: all 0.2s;
+  margin-top: 6px;
+}
+
+.btn-admin-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.6);
+  border-color: #fff;
+}
+
+.controls-panel {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 8px;
+}
+
+/* Badge de Tecla de Atalho PC */
+.kbd-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(0, 240, 255, 0.5);
+  border-bottom: 2px solid var(--neon-cyan);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.25);
+  margin-right: 4px;
+  vertical-align: middle;
+  letter-spacing: 0.5px;
+}
+
+/* Toast de Ação Rápida no Meio da Tela */
+.toast-popup {
+  position: absolute;
+  top: 16%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid var(--neon-cyan);
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.45);
+  pointer-events: none;
+  z-index: 80;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast-popup.hidden {
+  opacity: 0;
+  transform: translate(-50%, -10px);
+  pointer-events: none;
+}
+
+.mobile-close-btn {
+  display: none;
+  background: #ef4444;
+  border: none;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   RESPONSIVIDADE: MOBILE
+   ========================================================================== */
+@media (max-width: 860px) {
+  #app-wrapper {
+    padding: 0;
+    gap: 0;
+  }
+
+  #arcade-viewport-container {
+    height: 100vh;
+    max-height: 100vh;
+    width: 100vw;
+    max-width: 100vw;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  #mobile-hangar-toggle {
+    display: block;
+  }
+
+  #hangar-sidebar {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 85vw;
+    max-width: 340px;
+    height: 100vh;
+    transition: right 0.3s ease-in-out;
+    border-radius: 0;
+    border-right: none;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.95);
+  }
+
+  #hangar-sidebar.open {
+    right: 0;
+  }
+
+  .mobile-close-btn {
+    display: inline-block;
+  }
+}

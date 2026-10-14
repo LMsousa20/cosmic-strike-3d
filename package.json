@@ -1,0 +1,29 @@
+{
+  "name": "cosmic-strike-3d",
+  "version": "2.0.0",
+  "description": "Cosmic Strike 3D - Arcade Space Shooter com Three.js, painel administrativo e modelos procedurais",
+  "private": false,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "threejs",
+    "arcade",
+    "shmup",
+    "space-shooter",
+    "game-dev",
+    "webgl",
+    "vite"
+  ],
+  "author": "Lucas Monteiro <lmsousa20@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "vite": "^5.4.21"
+  }
+}

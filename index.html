@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Cosmic Strike 3D - Arcade Shmup</title>
+
+  <!-- Google Fonts: Sci-Fi & Retro Arcade -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/src/styles/game.css">
+</head>
+<body>
+
+  <div id="app-wrapper">
+    <!-- ÁREA DE COMBATE VERTICAL (PROPORÇÃO 9:16) -->
+    <div id="arcade-viewport-container">
+      <div id="canvas-container"></div>
+
+      <!-- Barra de HP de Topo do Chefão -->
+      <div id="boss-hud-bar">
+        <div class="boss-title-row">
+          <span id="boss-hud-title">⚠️ CHEFÃO DETECTADO</span>
+          <span>NÍVEL DE AMEAÇA MÁXIMO</span>
+        </div>
+        <div class="boss-hp-track">
+          <div id="boss-hud-hp-fill" class="boss-hp-fill"></div>
+        </div>
+      </div>
+
+      <!-- Alerta visual de Chefe de Fase -->
+      <div id="boss-warning-overlay">
+        ⚠️ ALERTA MÁXIMO ⚠️<br>
+        <span style="font-size: 11px; color: #ffd700;">DREADNOUGHT TITAN DETECTADO</span>
+      </div>
+
+      <!-- Notificação Toast de Poder / Ação Rápida -->
+      <div id="toast-notification" class="toast-popup hidden">REFORÇO ADICIONADO!</div>
+
+      <!-- MODAL: MENU INICIAL -->
+      <div id="screen-main-menu" class="game-overlay-screen">
+        <h1 class="overlay-title">COSMIC STRIKE 3D</h1>
+        <div class="overlay-subtitle">DEFESA ORBITAL DA GALÁXIA</div>
+        <div class="overlay-btn-group">
+          <button id="btn-menu-play" class="action-btn">▶ DECOLAR (JOGAR)</button>
+          <a href="/admin.html" class="action-btn btn-secondary">🛠️ PAINEL ADMINISTRATIVO</a>
+        </div>
+      </div>
+
+      <!-- MODAL: PAUSA -->
+      <div id="screen-pause" class="game-overlay-screen hidden">
+        <h2 class="overlay-title">JOGO PAUSADO</h2>
+        <div class="overlay-subtitle">SISTEMAS EM ESPERA</div>
+        <div class="overlay-btn-group">
+          <button id="btn-pause-resume" class="action-btn">▶ CONTINUAR</button>
+          <a href="/admin.html" class="action-btn btn-secondary">🛠️ PAINEL ADMIN</a>
+        </div>
+      </div>
+
+      <!-- MODAL: GAME OVER -->
+      <div id="screen-game-over" class="game-overlay-screen hidden">
+        <h2 class="overlay-title" style="color: #ef4444;">NAVE DESTRUÍDA</h2>
+        <div class="overlay-subtitle">MISSÃO INTERROMPIDA</div>
+        <div style="font-size: 13px; color: #94a3b8; margin-bottom: 20px; line-height: 1.8;">
+          PONTUAÇÃO FINAL: <b id="gameover-score" style="color: #38bdf8;">0</b><br>
+          CRÉDITOS ACUMULADOS: <b id="gameover-coins" style="color: #ffd700;">0</b> 🪙
+        </div>
+        <div class="overlay-btn-group">
+          <button id="btn-gameover-restart" class="action-btn btn-danger">🔄 REINICIAR MISSÃO</button>
+        </div>
+      </div>
+
+      <!-- HUD Rápido Integrado com a Tela (Ideal para Mobile) -->
+      <div id="combat-touch-hud">
+        <!-- Botão de Bomba EMP -->
+        <div id="btn-touch-bomb" class="touch-btn bomb-btn" title="Detonar Bomba EMP">
+          <span>💣 BOMBA</span>
+          <span id="touch-bomb-count" class="touch-btn-badge">x2</span>
+        </div>
+
+        <!-- Botão para abrir Hangar no celular -->
+        <button id="mobile-hangar-toggle">🛠️ HANGAR</button>
+
+        <!-- Botão de Reforço Rápido -->
+        <div id="btn-touch-wingman" class="touch-btn" title="Chamar Drone Wingman">
+          <span>🚀 APOIO</span>
+          <span id="touch-wingman-cost" class="touch-btn-badge">350</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAINEL LATERAL HANGAR / LOJA / STATUS -->
+    <aside id="hangar-sidebar">
+      <!-- Cabeçalho -->
+      <div class="hangar-header">
+        <div>
+          <h1 class="game-title">⚡ COSMIC STRIKE 3D</h1>
+          <div style="font-size: 10px; color: #38bdf8; margin-top: 3px;">TERMINAL DO PILOTO</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span id="ui-stage-badge" class="stage-badge">FASE 1</span>
+          <button id="btn-close-hangar" class="mobile-close-btn">✖</button>
+        </div>
+      </div>
+
+      <!-- Créditos & Moedas -->
+      <div class="credits-card">
+        <span class="credits-title">CRÉDITOS ESPACIAIS</span>
+        <div class="credits-value-box">
+          <span style="font-size: 16px;">🪙</span>
+          <span id="ui-coin-count" class="credits-value">0</span>
+        </div>
+      </div>
+
+      <!-- SELETOR DE NAVES DO HANGAR -->
+      <div class="ship-select-card">
+        <div class="ship-carousel-header">
+          <span class="hangar-card-title">Hangar de Naves</span>
+          <div style="display: flex; gap: 4px;">
+            <button id="btn-ship-prev" class="ship-nav-btn">◀</button>
+            <button id="btn-ship-next" class="ship-nav-btn">▶</button>
+          </div>
+        </div>
+        <div class="ship-display-info">
+          <div id="ship-card-name" class="ship-active-name">Falcão Estelar</div>
+          <div id="ship-card-desc" class="ship-active-desc">Caça equilibrado da frota.</div>
+        </div>
+        <div class="ship-action-bar">
+          <button id="btn-ship-action" class="ship-btn-select">SELECIONADA</button>
+        </div>
+      </div>
+
+      <!-- Status da Nave em Tempo Real -->
+      <div class="hangar-card">
+        <span class="hangar-card-title">Sistemas da Nave</span>
+
+        <!-- HP -->
+        <div class="stat-row">
+          <div class="stat-info">
+            <span style="color: #94a3b8;">BLINDAGEM (HP)</span>
+            <span id="ui-hp-text" style="color: #10b981; font-weight: bold;">100 / 100</span>
+          </div>
+          <div class="meter-container">
+            <div id="ui-hp-bar" class="meter-fill hp-meter"></div>
+          </div>
+        </div>
+
+        <!-- Escudo de Força -->
+        <div class="stat-row">
+          <div class="stat-info">
+            <span style="color: #94a3b8;">ESCUDO DE ENERGIA</span>
+            <span id="ui-shield-text" style="color: #06b6d4; font-weight: bold;">DESATIVADO</span>
+          </div>
+          <div class="meter-container">
+            <div id="ui-shield-bar" class="meter-fill shield-meter"></div>
+          </div>
+        </div>
+
+        <!-- Poder de Fogo (Nível 1 a 5) -->
+        <div class="stat-row">
+          <div class="stat-info">
+            <span style="color: #94a3b8;">CANHÃO PRINCIPAL</span>
+            <span id="ui-weapon-text" style="color: #f59e0b; font-weight: bold;">NÍVEL 1 (DUPLO)</span>
+          </div>
+          <div class="meter-container">
+            <div id="ui-weapon-bar" class="meter-fill weapon-meter"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Suporte Tático & Bomba -->
+      <div class="hangar-card">
+        <span class="hangar-card-title">Arsenal de Apoio</span>
+        
+        <button id="ui-btn-wingman" class="btn-call-wingman" title="Atalho PC: Tecla R ou E">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <span>🚀 <kbd class="kbd-hint">R</kbd> REFORÇO</span>
+            <span id="wingman-cost-text" style="font-size: 10px; color: #ffd700; font-family: var(--font-mono);">250 🪙</span>
+          </div>
+        </button>
+
+        <button id="ui-btn-buy-bomb" class="shop-item-btn" style="margin-top: 6px;" title="Atalho PC: Tecla 4">
+          <div>
+            <div class="shop-item-name">💣 <kbd class="kbd-hint">4</kbd> RECARREGAR BOMBA EMP</div>
+            <div class="shop-item-desc">Limpa todos os tiros e causa 400 de dano</div>
+          </div>
+          <div class="shop-item-cost">250 🪙</div>
+        </button>
+      </div>
+
+      <!-- Loja de Upgrades Permanentes -->
+      <div class="hangar-card" style="margin-top: auto;">
+        <span class="hangar-card-title">
+          <span>Oficina de Melhorias</span>
+          <span style="font-size: 9px; color: #10b981;">AUTO-SAVE ON</span>
+        </span>
+
+        <div class="shop-items-grid">
+          <!-- Upgrade HP Máximo -->
+          <button id="btn-up-hp" class="shop-item-btn" title="Atalho PC: Tecla 1">
+            <div>
+              <div class="shop-item-name">🛡️ <kbd class="kbd-hint">1</kbd> Blindagem <span id="lvl-hp">(Nv. 1)</span></div>
+              <div class="shop-item-desc">+25 HP Máximo no casco</div>
+            </div>
+            <div id="cost-hp" class="shop-item-cost">300 🪙</div>
+          </button>
+
+          <!-- Upgrade Propulsão -->
+          <button id="btn-up-speed" class="shop-item-btn" title="Atalho PC: Tecla 2">
+            <div>
+              <div class="shop-item-name">⚡ <kbd class="kbd-hint">2</kbd> Turbinas <span id="lvl-speed">(Nv. 1)</span></div>
+              <div class="shop-item-desc">+15% agilidade de manobra</div>
+            </div>
+            <div id="cost-speed" class="shop-item-cost">250 🪙</div>
+          </button>
+
+          <!-- Upgrade Ímã de Moedas -->
+          <button id="btn-up-magnet" class="shop-item-btn" title="Atalho PC: Tecla 3">
+            <div>
+              <div class="shop-item-name">🧲 <kbd class="kbd-hint">3</kbd> Campo Magnético <span id="lvl-magnet">(Nv. 1)</span></div>
+              <div class="shop-item-desc">Atrai moedas a distâncias maiores</div>
+            </div>
+            <div id="cost-magnet" class="shop-item-cost">200 🪙</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Botão para o Painel Administrativo -->
+      <a href="/admin.html" class="btn-admin-link">
+        ⚙️ ABRIR PAINEL ADMINISTRATIVO
+      </a>
+
+      <!-- Painel de Controles e Atalhos para PC -->
+      <div class="controls-panel">
+        🎮 <b>PC:</b> <b>WASD / Setas</b> ou Arraste do Mouse.<br>
+        🚀 <b>Reforço:</b> Tecla <b>R</b> ou <b>E</b> (Acumulativo até x8).<br>
+        💥 <b>Bomba EMP:</b> <b>ESPAÇO</b> ou Tecla <b>B</b>.<br>
+        ⚡ <b>Oficina Rápida:</b> Teclas <b>1, 2, 3, 4</b>.<br>
+        ⏸️ <b>Pausa:</b> Tecla <b>ESC</b> ou <b>P</b>.
+      </div>
+    </aside>
+  </div>
+
+  <script type="module" src="/src/game/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo - Cosmic Strike 3D</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/src/styles/admin.css">
+</head>
+<body>
+
+  <div id="admin-app">
+    <!-- BARRA LATERAL FIXA -->
+    <aside id="admin-sidebar">
+      <div class="admin-brand">
+        <span style="font-size: 20px;">⚡</span>
+        <div>
+          <div class="admin-brand-title">COSMIC STRIKE</div>
+          <div style="font-size: 9px; color: var(--neon-gold); font-family: var(--font-display);">PAINEL DE CONTROLE</div>
+        </div>
+      </div>
+
+      <nav class="admin-nav">
+        <a href="#/ships" class="admin-nav-item" data-route="ships">
+          <span class="nav-icon">🚀</span> Personagens / Naves
+        </a>
+        <a href="#/enemies" class="admin-nav-item" data-route="enemies">
+          <span class="nav-icon">👾</span> Monstros / Inimigos
+        </a>
+        <a href="#/bosses" class="admin-nav-item" data-route="bosses">
+          <span class="nav-icon">👹</span> Chefões
+        </a>
+        <a href="#/obstacles" class="admin-nav-item" data-route="obstacles">
+          <span class="nav-icon">☄️</span> Obstáculos Especiais
+        </a>
+        <a href="#/tracks" class="admin-nav-item" data-route="tracks">
+          <span class="nav-icon">🌌</span> Pistas / Fases
+        </a>
+        <a href="#/economy" class="admin-nav-item" data-route="economy">
+          <span class="nav-icon">💰</span> Economia & Preços
+        </a>
+        <a href="#/backup" class="admin-nav-item" data-route="backup">
+          <span class="nav-icon">💾</span> Backup & Exportação
+        </a>
+      </nav>
+
+      <a href="/index.html" class="admin-footer-btn">
+        ▶ JOGAR AGORA
+      </a>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main id="admin-main">
+      <header class="admin-topbar">
+        <div id="admin-view-title" class="admin-view-title">
+          <span class="nav-icon">🚀</span> PERSONAGENS / NAVES
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 10px; color: #10b981; font-family: var(--font-display);">● SINCRONIZADO AO VIVO</span>
+        </div>
+      </header>
+
+      <section id="admin-content-scroll" class="admin-content-scroll"></section>
+    </main>
+  </div>
+
+  <script type="module" src="/src/admin/main.js"></script>
+</body>
+</html>
